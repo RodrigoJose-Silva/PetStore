@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
 
 //3- Classe
@@ -18,18 +19,18 @@ public class Pet {
     String urli = "https://petstore.swagger.io/v2/pet"; //url da entidade (API) Pet
 
 
-    //3.2 - M√©todos e Fun√ß√µes
+    //3.2 - MÈtodos e FunÁıes
     public String lerJson (String caminhoJson) throws IOException {
         return new String(Files.readAllBytes(Paths.get(caminhoJson)));
     }
 
     //Incluir - Create - Post
-    @Test  // Identifica o m√©todo ou fun√ß√£o como "TESTE" para o TestNG
+    @Test(priority=1)  // Identifica o mÈtodo ou funÁ„o como "TESTE" para o TestNG
     public void incluirPet() throws IOException {
         String jsonBody = lerJson("db/pet1.json");
 
         //Sintaxe Gherkin
-        // DADO - QUANDO - ENT√ÉO
+        // DADO - QUANDO - ENT√O
         //Given - When - Then
 
         given()//DADO
@@ -38,12 +39,38 @@ public class Pet {
                 .body(jsonBody)
         .when() //QUANDO
                 .post(urli)
-        .then() //ENT√ÉO
+        .then() //ENT√O
                 .log().all()
                 .statusCode(200)
                 .body("name", is("Pandora"))
                 .body("status", is("available"))
+                .body("category.name", is("RHTJTR154BTJ415NTR5"))
+                .body("tags.name", contains("Curso de teste API"))// estrutura utilizado para validar dados de subcategorias
         ;
     }
 
+    @Test(priority=2)
+    public void consultarPet () {
+        String petId = "2021081301";
+
+        String token =
+        given()
+                .contentType("application/json")
+                .log().all()
+        .when()
+                .get(urli + "/" + petId)
+        .then()
+                .statusCode(200)
+                .log().all()
+                .body("name", is("Pandora"))
+                .body("category.name", is("RHTJTR154BTJ415NTR5"))
+                .body("tags.id", contains(2021))
+                .body("status", is("available"))
+        .extract()
+                .path("category.name")
+        ;
+
+        System.out.println("A chave do token utilizada È: " + token);
+
+    }
 }
