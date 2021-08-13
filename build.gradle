@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'br.com.iterays'
+group 'br.com.iterasys'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -12,4 +12,8 @@ repositories {
 dependencies {
     testImplementation group: 'org.testng', name: 'testng', version: '7.1.0'
     testImplementation group: 'io.rest-assured', name: 'rest-assured', version: '4.3.3'
+}
+
+test{
+    useTestNG()
 }
