@@ -73,4 +73,23 @@ public class Pet {
         System.out.println("A chave do token utilizada é: " + token);
 
     }
+
+    @Test(priority = 3)
+    public void alterarPet () throws IOException {
+        String jsonBody = lerJson("db/pet2.json");
+
+        given()
+                .contentType("application/json")
+                .log().all()
+                .body(jsonBody)
+        .when()
+                .put(urli)
+        .then()
+                .log().all()
+                .statusCode(200)
+                .body("name", is("Pandora"))
+                .body("status", is("sold"))
+        ;
+
+    }
 }
